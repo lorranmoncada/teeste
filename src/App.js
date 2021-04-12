@@ -4,14 +4,14 @@ import 'devextreme/dist/css/dx.common.css';
 import 'devextreme/dist/css/dx.light.css';
 
 /* import PivotWebApi from './Components/PivotWebApi' */
-import PivotDragDropApiDevExpress from './Components/PivotDragDropApiDevExpress'
+import PivotCsv from './Components/PivotCsv'
 
 
 class App extends React.Component {
   
   render() {
     return (
-      <PivotDragDropApiDevExpress></PivotDragDropApiDevExpress>
+      <PivotCsv></PivotCsv>
     );
   }
 
