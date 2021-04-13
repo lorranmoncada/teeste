@@ -11,7 +11,6 @@ import saveAs from 'file-saver';
 import { exportPivotGrid } from 'devextreme/excel_exporter';
 import PivotGridDataSource from 'devextreme/ui/pivot_grid/data_source';
 import './styles.css';
-import { createStore } from 'devextreme-aspnet-data-nojquery';
 import data from '../ArrayData/csv-data.js'
 
 class PivotCsv extends React.Component {
@@ -21,13 +20,16 @@ class PivotCsv extends React.Component {
       showColumnFields: true,
       showDataFields: true,
       showFilterFields: true,
-      showRowFields: true
+      showRowFields: true,
+      showTotalHeaderGrid: true,
+      TotalHeaderGrid: 'standard'
     };
     this.onShowColumnFieldsChanged = this.onShowColumnFieldsChanged.bind(this);
     this.onShowDataFieldsChanged = this.onShowDataFieldsChanged.bind(this);
     this.onShowFilterFieldsChanged = this.onShowFilterFieldsChanged.bind(this);
     this.onShowRowFieldsChanged = this.onShowRowFieldsChanged.bind(this);
     this.onContextMenuPreparing = this.onContextMenuPreparing.bind(this);
+    this.onShowTotalHeaderGrid = this.onShowTotalHeaderGrid.bind(this);
   }
 
   onShowColumnFieldsChanged(e) {
@@ -36,6 +38,11 @@ class PivotCsv extends React.Component {
 
   onShowDataFieldsChanged(e) {
     this.setState({ showDataFields: e.value });
+  }
+
+  onShowTotalHeaderGrid(e){
+    this.state.TotalHeaderGrid =  this.state.TotalHeaderGrid == 'tree' ? 'standard' : 'tree';
+    this.setState({ TotalHeaderGrid:this.state.TotalHeaderGrid, showTotalHeaderGrid: e.value });
   }
 
   onShowFilterFieldsChanged(e) {
@@ -89,14 +96,23 @@ class PivotCsv extends React.Component {
     }
   }
 
+  
+
+  componentDidMount() {
+  let valor = data.reduce((total,val) => {
+    if(val.cc2 !=null) return total += val.cc2; 
+  else return total},0)
+ }
+
   render() {
     return (
       <React.Fragment>
         <PivotGrid
           id="sales"
           dataSource={dataSource}
-          allowSortingBySummary={true}
+          allowSortingBySummary={false}
           allowSorting={true}
+          rowHeaderLayout={this.state.TotalHeaderGrid}
           allowFiltering={true}
           showBorders={true}
           height={490}
@@ -133,17 +149,24 @@ class PivotCsv extends React.Component {
           </div>
           &nbsp;
           <div className="option">
-            <CheckBox id="show-column-fields"
+            <CheckBox
               value={this.state.showFilterFields}
               onValueChanged={this.onShowFilterFieldsChanged}
               text="Mostrar campos de filtro" />
           </div>
           &nbsp;
           <div className="option">
-            <CheckBox id="show-filter-fields"
+            <CheckBox 
               value={this.state.showRowFields}
               onValueChanged={this.onShowRowFieldsChanged}
               text="Mostrar campos de linha" />
+          </div>
+          &nbsp;
+          <div className="option">
+            <CheckBox 
+              value={this.state.showTotalHeaderGrid}
+              onValueChanged={this.onShowTotalHeaderGrid}
+              text="Mostrar total no cabeçalho" />
           </div>
         </div>
       </React.Fragment>
@@ -156,12 +179,11 @@ const dataSource = new PivotGridDataSource({
     caption: 'TipoMvConsulta',
     dataField: 'deTipoMvConsulta',
     width: 250,
-   /*  expanded: true, */
     sortBySummaryField: 'ccTotal',
     sortBySummaryPath: [],
     sortOrder: 'desc',
     area: 'row'
-  }, {
+  }, { 
     caption: 'Assunto',
     dataField: 'deAssunto',
     width: 250,
@@ -169,12 +191,11 @@ const dataSource = new PivotGridDataSource({
     sortBySummaryPath: [],
     sortOrder: 'desc',
     area: 'row'
-  }, {
+  },  {
     caption: 'Area',
     dataField: 'area',
-    area: 'row',
+    area: 'data',
     sortBySummaryField: 'ccTotal',
-    sortBySummaryPath: [],
     sortOrder: 'desc',
     width: 250
   } , {
@@ -182,7 +203,7 @@ const dataSource = new PivotGridDataSource({
     dataField: 'cc1',
     width: 250,
     sortBySummaryField: 'ccTotal',
-    sortBySummaryPath: [],
+    summaryType: 'sum',
     sortOrder: 'desc',
     area: 'row'
   }, {
@@ -190,7 +211,7 @@ const dataSource = new PivotGridDataSource({
     dataField: 'cc2',
     width: 250,
     sortBySummaryField: 'ccTotal',
-    sortBySummaryPath: [],
+    summaryType: 'sum',
     sortOrder: 'desc',
     area: 'row'
   }, {
@@ -198,7 +219,7 @@ const dataSource = new PivotGridDataSource({
     dataField: 'cc3',
     width: 250,
     sortBySummaryField: 'ccTotal',
-    sortBySummaryPath: [],
+    summaryType: 'sum',
     sortOrder: 'desc',
     area: 'row'
   }, {
@@ -206,7 +227,7 @@ const dataSource = new PivotGridDataSource({
     dataField: 'cc4',
     width: 250,
     sortBySummaryField: 'ccTotal',
-    sortBySummaryPath: [],
+    summaryType: 'sum',
     sortOrder: 'desc',
     area: 'row'
   }, {
@@ -214,16 +235,15 @@ const dataSource = new PivotGridDataSource({
     dataField: 'cc5',
     width: 250,
     sortBySummaryField: 'ccTotal',
-    sortBySummaryPath: [],
+    summaryType: 'sum',
     sortOrder: 'desc',
     area: 'row'
-  }, {
+  },{
     caption: 'Total',
     dataField: 'ccTotal',
     summaryType: 'sum',
-    format: 'decimal',
     area: 'data'
-  },{
+  } ,{
     dataField: 'Id',
     visible: false
   }],

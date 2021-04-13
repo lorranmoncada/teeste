@@ -3,6 +3,7 @@
 }
 
 .options {
+    z-index: 999999999999999999;
     padding: 20px;
     margin-top: 20px;
     background-color: rgba(191, 191, 191, 0.15);
